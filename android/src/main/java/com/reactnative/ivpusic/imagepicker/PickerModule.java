@@ -727,9 +727,10 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
             options.setToolbarColor(Color.parseColor(cropperToolbarColor));
         }
 
-        if (cropperStatusBarColor != null) {
-            options.setStatusBarColor(Color.parseColor(cropperStatusBarColor));
-        }
+        // 在uCrop的2.2.11-native版本中已经移除了setStatusBarColor方法，代替使用的是setStatusBarLight
+        // if (cropperStatusBarColor != null) {
+        //     options.setStatusBarColor(Color.parseColor(cropperStatusBarColor));
+        // }
 
         if (cropperToolbarWidgetColor != null) {
             options.setToolbarWidgetColor(Color.parseColor(cropperToolbarWidgetColor));
