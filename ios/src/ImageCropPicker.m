@@ -531,13 +531,17 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
     options.networkAccessAllowed = YES;
     
     if ([[[self options] objectForKey:@"multiple"] boolValue]) {
-        NSMutableArray *selections = [[NSMutableArray alloc] init];
+        NSMutableArray *selections = [NSMutableArray arrayWithCapacity:assets.count];
+        for (NSUInteger index = 0; index < assets.count; index++) {
+            [selections addObject:[NSNull null]];
+        }
         
         [self showActivityIndicator:^(UIActivityIndicatorView *indicatorView, UIView *overlayView) {
             NSLock *lock = [[NSLock alloc] init];
             __block int processed = 0;
             
-            for (PHAsset *phAsset in assets) {
+            for (NSUInteger index = 0; index < assets.count; index++) {
+                PHAsset *phAsset = assets[index];
                 
                 if (phAsset.mediaType == PHAssetMediaTypeVideo) {
                     [self getVideoAsset:phAsset completion:^(NSDictionary* video) {
@@ -553,7 +557,7 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
                                 return;
                             }
                             
-                            [selections addObject:video];
+                            [selections replaceObjectAtIndex:index withObject:video];
                             processed++;
                             [lock unlock];
                             
@@ -627,7 +631,7 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
                                         exif = [[CIImage imageWithData:imageData] properties];
                                     }
                                     
-                                    [selections addObject:[self createAttachmentResponse:filePath
+                                    [selections replaceObjectAtIndex:index withObject:[self createAttachmentResponse:filePath
                                                                                 withExif: exif
                                                                            withSourceURL:[sourceURL absoluteString]
                                                                      withLocalIdentifier: phAsset.localIdentifier
